@@ -34,12 +34,14 @@ public class Carte {
     public void dessiner(Graphics g) {
         for (int y = 0; y < Constantes.N_BLOCS; y++) {
             for (int x = 0; x < Constantes.N_BLOCS; x++) {
+
                 if (grille[y][x] == 0) {
-                    g.setColor(Color.BLUE);
-                    g.fillRect(x * Constantes.TAILLE_BLOC, y * Constantes.TAILLE_BLOC, Constantes.TAILLE_BLOC, Constantes.TAILLE_BLOC);
-                    g.setColor(Color.BLACK);
-                    g.drawRect(x * Constantes.TAILLE_BLOC, y * Constantes.TAILLE_BLOC, Constantes.TAILLE_BLOC, Constantes.TAILLE_BLOC);
+                    // C'EST UN MUR : On dessine l'image mur.png
+                    // g.drawImage(Image, positionX, positionY, observateur (null ici))
+                    g.drawImage(Constantes.IMAGE_MUR, x * Constantes.TAILLE_BLOC, y * Constantes.TAILLE_BLOC, null);
+
                 } else if (grille[y][x] == 1) {
+                    // C'EST UN POINT : On garde le petit carré blanc simple
                     g.setColor(Color.WHITE);
                     g.fillRect(x * Constantes.TAILLE_BLOC + 10, y * Constantes.TAILLE_BLOC + 10, 4, 4);
                 }

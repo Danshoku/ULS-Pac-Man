@@ -50,13 +50,7 @@ public class Pacman extends Unite {
 
     @Override
     public void dessiner(Graphics g) {
-        g.setColor(Color.YELLOW);
-        // On oriente la bouche selon la direction
-        int angleDepart = 30;
-        if (dx == -1) angleDepart = 210; // Gauche
-        if (dy == -1) angleDepart = 120; // Haut
-        if (dy == 1) angleDepart = 300;  // Bas
-
-        g.fillArc(x, y, Constantes.TAILLE_BLOC, Constantes.TAILLE_BLOC, angleDepart, 300);
+        // On dessine simplement l'image de Tupac à sa position x, y
+        g.drawImage(Constantes.IMAGE_TUPAC, x, y, null);
     }
 }

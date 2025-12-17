@@ -84,7 +84,7 @@ public class Fantome extends Unite {
 
     @Override
     public void dessiner(Graphics g) {
-        g.setColor(Color.RED);
-        g.fillOval(x, y, Constantes.TAILLE_BLOC, Constantes.TAILLE_BLOC);
+        // On dessine l'image du policier
+        g.drawImage(Constantes.IMAGE_POLICE, x, y, null);
     }
 }
