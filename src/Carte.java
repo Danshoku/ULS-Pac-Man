@@ -31,19 +31,25 @@ public class Carte {
         grille[y][x] = 2; // On met 2 pour dire que c'est vide (point mangé)
     }
 
+    public void setContenu(int x, int y, int valeur) {
+        if (x >= 0 && x < Constantes.N_BLOCS && y >= 0 && y < Constantes.N_BLOCS) {
+            grille[y][x] = valeur;
+        }
+    }
+
     public void dessiner(Graphics g) {
         for (int y = 0; y < Constantes.N_BLOCS; y++) {
             for (int x = 0; x < Constantes.N_BLOCS; x++) {
-
-                if (grille[y][x] == 0) {
-                    // C'EST UN MUR : On dessine l'image mur.png
-                    // g.drawImage(Image, positionX, positionY, observateur (null ici))
+                int val = grille[y][x];
+                if (val == 0) {
                     g.drawImage(Constantes.IMAGE_MUR, x * Constantes.TAILLE_BLOC, y * Constantes.TAILLE_BLOC, null);
-
-                } else if (grille[y][x] == 1) {
-                    // C'EST UN POINT : On garde le petit carré blanc simple
+                } else if (val == 1) {
                     g.setColor(Color.WHITE);
                     g.fillRect(x * Constantes.TAILLE_BLOC + 10, y * Constantes.TAILLE_BLOC + 10, 4, 4);
+                }
+                else if (val == 3) {
+                    // On dessine le pistolet
+                    g.drawImage(Constantes.IMAGE_PISTOLET, x * Constantes.TAILLE_BLOC, y * Constantes.TAILLE_BLOC, null);
                 }
             }
         }

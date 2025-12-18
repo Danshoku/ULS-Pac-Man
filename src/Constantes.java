@@ -1,8 +1,7 @@
 import javax.imageio.ImageIO;
 import java.awt.Image;
-import java.io.IOException;
-// Import nécessaire pour accéder aux options de redimensionnement
 import java.awt.image.BufferedImage;
+import java.io.IOException;
 
 public class Constantes {
     public static final int TAILLE_BLOC = 24;
@@ -10,33 +9,36 @@ public class Constantes {
     public static final int TAILLE_ECRAN = N_BLOCS * TAILLE_BLOC;
     public static final int VITESSE = 4;
 
+    // --- NOUVELLES CONSTANTES ---
+    public static final int VIES_DEPART = 3;
+    // Durée du pistolet en "tics" du jeu. Le jeu tourne à 25 images/seconde (40ms).
+    // 25 * 10 = 250 tics pour 10 secondes.
+    public static final int DUREE_SUPER = 250;
+
     public static Image IMAGE_MUR;
     public static Image IMAGE_TUPAC;
     public static Image IMAGE_POLICE;
+    // Nouvelle image
+    public static Image IMAGE_PISTOLET;
 
     static {
         try {
-            System.out.println("Chargement et redimensionnement des images...");
+            System.out.println("Chargement des images...");
+            // On charge les originaux
+            BufferedImage murOrg = ImageIO.read(Constantes.class.getResource("/mur.png"));
+            BufferedImage tupacOrg = ImageIO.read(Constantes.class.getResource("/tupac.png"));
+            BufferedImage policeOrg = ImageIO.read(Constantes.class.getResource("/police.png"));
+            // On charge le pistolet
+            BufferedImage pistoletOrg = ImageIO.read(Constantes.class.getResource("/pistolet.png"));
 
-            // 1. On charge l'image originale (peut être grande)
-            BufferedImage murOriginal = ImageIO.read(Constantes.class.getResource("/mur.png"));
-            // 2. On crée une version redimensionnée à TAILLE_BLOC (24x24)
-            // SCALE_SMOOTH permet d'avoir un résultat propre même en réduisant beaucoup
-            IMAGE_MUR = murOriginal.getScaledInstance(TAILLE_BLOC, TAILLE_BLOC, Image.SCALE_SMOOTH);
+            // On redimensionne tout
+            IMAGE_MUR = murOrg.getScaledInstance(TAILLE_BLOC, TAILLE_BLOC, Image.SCALE_SMOOTH);
+            IMAGE_TUPAC = tupacOrg.getScaledInstance(TAILLE_BLOC, TAILLE_BLOC, Image.SCALE_SMOOTH);
+            IMAGE_POLICE = policeOrg.getScaledInstance(TAILLE_BLOC, TAILLE_BLOC, Image.SCALE_SMOOTH);
+            IMAGE_PISTOLET = pistoletOrg.getScaledInstance(TAILLE_BLOC, TAILLE_BLOC, Image.SCALE_SMOOTH);
 
-            // On fait pareil pour Tupac
-            BufferedImage tupacOriginal = ImageIO.read(Constantes.class.getResource("/tupac.png"));
-            IMAGE_TUPAC = tupacOriginal.getScaledInstance(TAILLE_BLOC, TAILLE_BLOC, Image.SCALE_SMOOTH);
-
-            // Et pour la police
-            BufferedImage policeOriginal = ImageIO.read(Constantes.class.getResource("/police.png"));
-            IMAGE_POLICE = policeOriginal.getScaledInstance(TAILLE_BLOC, TAILLE_BLOC, Image.SCALE_SMOOTH);
-
-            System.out.println("Succès ! Images prêtes.");
-
-        } catch (IOException | IllegalArgumentException | NullPointerException e) {
-            // Le NullPointerException attrape le cas où l'image n'est pas trouvée
-            System.err.println("ERREUR : Impossible de trouver ou charger une image dans resources !");
+        } catch (Exception e) {
+            System.err.println("ERREUR CRITIQUE : Problème d'images dans resources !");
             e.printStackTrace();
         }
     }

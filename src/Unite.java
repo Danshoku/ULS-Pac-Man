@@ -2,29 +2,41 @@ import java.awt.Graphics;
 import java.awt.Rectangle;
 
 public abstract class Unite {
-    // protected permet aux enfants (Pacman, Fantome) d'utiliser ces variables directement
     protected int x, y;
     protected int dx, dy;
+    // NOUVEAU : Pour se souvenir du départ
+    protected int startX, startY;
 
     public Unite(int x, int y) {
         this.x = x;
         this.y = y;
+        // On sauvegarde la position initiale
+        this.startX = x;
+        this.startY = y;
         this.dx = 0;
         this.dy = 0;
     }
 
-    // Méthode abstraite : chaque enfant DOIT écrire sa propre version de cette méthode
-    public abstract void dessiner(Graphics g);
+    // NOUVELLE MÉTHODE : Pour remettre l'unité au départ
+    public void resetPosition() {
+        this.x = startX;
+        this.y = startY;
+        // On arrête le mouvement
+        this.dx = 0;
+        this.dy = 0;
+        // Si c'est un fantôme, il doit recommencer à descendre pour ne pas être bloqué
+        if (this instanceof Fantome) {
+            this.dy = 1;
+        }
+    }
 
-    // Méthode abstraite : chacun bouge différemment (Clavier vs Hasard)
+    // ... le reste du fichier (méthodes abstraites, getters) ne change pas ...
+    public abstract void dessiner(Graphics g);
     public abstract void bouger(Carte carte);
 
-    // Méthode commune : tout le monde a besoin de sa "boîte" pour les collisions
     public Rectangle getRect() {
         return new Rectangle(x, y, Constantes.TAILLE_BLOC - 4, Constantes.TAILLE_BLOC - 4);
     }
-
-    // Getters pour que JeuPanel puisse lire la position
     public int getX() { return x; }
     public int getY() { return y; }
 }

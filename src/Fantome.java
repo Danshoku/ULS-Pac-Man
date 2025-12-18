@@ -1,6 +1,6 @@
 import java.awt.Color;
 import java.awt.Graphics;
-import java.util.ArrayList; // Nécessaire pour faire une liste de choix
+import java.util.ArrayList;
 
 public class Fantome extends Unite {
 
@@ -9,44 +9,67 @@ public class Fantome extends Unite {
         this.dy = 1;
     }
 
+    // --- NOUVELLE MÉTHODE ---
+    // Cette méthode téléporte le fantôme dans le coin opposé à Pacman
+    public void respawnLoin(Pacman pacman) {
+        int pacX = pacman.getX() / Constantes.TAILLE_BLOC;
+        int pacY = pacman.getY() / Constantes.TAILLE_BLOC;
+
+        int milieu = Constantes.N_BLOCS / 2;
+
+        int nouveauX, nouveauY;
+
+        // Si Pacman est à GAUCHE (plus petit que le milieu), le fantôme va à DROITE (13)
+        // Sinon, le fantôme va à GAUCHE (1)
+        if (pacX < milieu) {
+            nouveauX = 13;
+        } else {
+            nouveauX = 1;
+        }
+
+        // Si Pacman est en HAUT, le fantôme va en BAS (13)
+        // Sinon, le fantôme va en HAUT (1)
+        if (pacY < milieu) {
+            nouveauY = 13;
+        } else {
+            nouveauY = 1;
+        }
+
+        // On applique la téléportation
+        this.x = nouveauX * Constantes.TAILLE_BLOC;
+        this.y = nouveauY * Constantes.TAILLE_BLOC;
+
+        // On réinitialise le mouvement pour qu'il reparte proprement
+        this.dx = 0;
+        this.dy = 0;
+    }
+
     @Override
     public void bouger(Carte carte) {
-        // 1. Calcul de la position future théorique
         int futurX = x + dx * Constantes.VITESSE;
         int futurY = y + dy * Constantes.VITESSE;
 
-        // 2. Vérification des collisions AVANT de bouger
-        // On regarde les 4 coins du futur carré du fantôme pour voir s'ils touchent un mur
         if (estDansMur(futurX, futurY, carte)) {
-            // AIE ! Mur droit devant ! On s'arrête et on cherche une nouvelle voie.
-            // On réaligne le fantôme parfaitement sur la grille pour éviter les bugs
             x = (x / Constantes.TAILLE_BLOC) * Constantes.TAILLE_BLOC;
             y = (y / Constantes.TAILLE_BLOC) * Constantes.TAILLE_BLOC;
-
             choisirNouvelleDirection(carte);
         } else {
-            // La voie est libre, on avance
             x = futurX;
             y = futurY;
-
-            // 3. À chaque intersection, petite chance de changer de direction pour être moins prévisible
             if (x % Constantes.TAILLE_BLOC == 0 && y % Constantes.TAILLE_BLOC == 0) {
-                if (Math.random() < 0.1) { // 10% de chance de tourner quand c'est possible
+                if (Math.random() < 0.1) {
                     choisirNouvelleDirection(carte);
                 }
             }
         }
     }
 
-    // Fonction utilitaire pour vérifier si une position touche un mur
     private boolean estDansMur(int px, int py, Carte carte) {
-        // On vérifie le coin haut-gauche et le coin bas-droite du carré
         int caseX1 = px / Constantes.TAILLE_BLOC;
         int caseY1 = py / Constantes.TAILLE_BLOC;
         int caseX2 = (px + Constantes.TAILLE_BLOC - 1) / Constantes.TAILLE_BLOC;
         int caseY2 = (py + Constantes.TAILLE_BLOC - 1) / Constantes.TAILLE_BLOC;
 
-        // Si l'un des coins touche un mur (0), c'est une collision
         if (carte.getContenu(caseX1, caseY1) == 0 || carte.getContenu(caseX2, caseY2) == 0 ||
                 carte.getContenu(caseX2, caseY1) == 0 || carte.getContenu(caseX1, caseY2) == 0) {
             return true;
@@ -55,10 +78,7 @@ public class Fantome extends Unite {
     }
 
     private void choisirNouvelleDirection(Carte carte) {
-        // On liste toutes les directions possibles (Haut, Bas, Gauche, Droite)
-        // qui ne sont PAS des murs
         ArrayList<String> directionsPossibles = new ArrayList<>();
-
         int caseX = x / Constantes.TAILLE_BLOC;
         int caseY = y / Constantes.TAILLE_BLOC;
 
@@ -67,14 +87,11 @@ public class Fantome extends Unite {
         if (carte.getContenu(caseX, caseY + 1) != 0) directionsPossibles.add("BAS");
         if (carte.getContenu(caseX, caseY - 1) != 0) directionsPossibles.add("HAUT");
 
-        // Si on est coincé (pas de direction), on ne fait rien
         if (directionsPossibles.isEmpty()) return;
 
-        // On en choisit une au hasard
         int rand = (int) (Math.random() * directionsPossibles.size());
         String choix = directionsPossibles.get(rand);
 
-        // On applique
         dx = 0; dy = 0;
         if (choix.equals("DROITE")) dx = 1;
         if (choix.equals("GAUCHE")) dx = -1;
@@ -84,7 +101,6 @@ public class Fantome extends Unite {
 
     @Override
     public void dessiner(Graphics g) {
-        // On dessine l'image du policier
         g.drawImage(Constantes.IMAGE_POLICE, x, y, null);
     }
 }
